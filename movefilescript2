@@ -1,0 +1,35 @@
+#f = open("/home/user/Desktop/2024-00146224_20254031_1003.csv")
+#print(f.read())
+
+# importing required classes
+import os
+from pypdf import PdfReader
+from pathlib import Path
+data_folder = Path('/home/user/Desktop/')
+source = data_folder / '111123.pdf'
+output_folder = Path('/home/user/Desktop/')
+
+
+# creating a pdf reader object
+reader = PdfReader(data_folder / '111123.pdf')
+
+# source = '/home/user/Desktop/111123.pdf'
+# dest = '/home/user/Desktop/spam.pdf'
+
+# printing number of pages in pdf file
+# print(len(reader.pages))
+
+# creating a page object
+page = reader.pages[0]
+
+dest = output_folder / page.extract_text()
+# extracting text from page
+print(page.extract_text())
+
+# Now rename the source filename to destination filename
+# using os.rename() method
+os.rename(source, dest)
+
+# above from https://www.geeksforgeeks.org/python/working-with-pdf-files-in-python/
+
+# ok the above does actually open the pdf, learn the text inside is '456', and then rename the file as 456
