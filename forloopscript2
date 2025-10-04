@@ -1,0 +1,30 @@
+# Oct2024 to practice for pdf renaming
+# this version will have a counter
+
+import glob
+import os
+import re
+from pathlib import Path
+from pypdf import PdfReader
+
+output_folder = Path('/spam/eggs/folder/')
+regex = r'[0-9]{5,6}'
+
+dq_type = '/me09*.pdf'
+inv_count = 0
+cr_count = 0
+
+for filename in glob.glob('/spam/eggs/folder/Intact_202509*.pdf'):
+    reader = PdfReader(filename)
+    page = reader.pages[0]
+    regex_invoice_number = re.search(regex, page.extract_text()).group()
+    if len(regex_invoice_number) == 6:
+        inv_count+=1
+        os.rename(filename, output_folder/regex_invoice_number)
+    elif len(regex_invoice_number) == 5:
+        cr_count+=1
+        os.rename(filename, output_folder/(str(regex_invoice_number)+"-credit"))
+        print(str(inv_count) + " Invoice pdfs renamed")
+        print(str(cr_count) + " Credit pdfs renamed")
+        # ok so that works, note to add word to filename needs whole thing
+        # turned into a string
