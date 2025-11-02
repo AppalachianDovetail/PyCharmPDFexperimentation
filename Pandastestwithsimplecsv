@@ -1,0 +1,47 @@
+# Oct2025 to relearn using Pandas
+# this assumes csv has important column headers as row1
+
+import pandas as pd
+import os
+# import re
+from pathlib import Path
+
+
+source_folder = Path('/filepath/Python/')
+source_file = "TestCSVOct2025simple.csv"
+output_file = "TestCSVOct2025simpleOutput.csv"
+
+df = pd.read_csv(source_folder/source_file)
+
+# print(df)
+
+# Ok below will give the sum of that columm
+# print(df['Cost'].sum())
+
+"""below drops the named column
+The axis=1 parameter specifies that the operation is on columns, 
+and inplace=True modifies the original DataFrame directly"""
+df.drop(["Date"], axis=1, inplace=True)
+
+
+column_sum = df['Cost'].sum()
+
+new_row = pd.DataFrame({'Cost': [column_sum]}, index=['Total'])
+df_with_sum = pd.concat([df, new_row])
+
+
+
+
+""" below saves new df to output file, indexfalse avoids it 
+adding an index column into the csv
+note that if adding to the df that needs a new variable dfwithsum"""
+# df.to_csv(source_folder/output_file, index=False)
+#df.to_csv(source_folder/output_file)
+#df_with_sum.to_csv(source_folder/output_file, index=False)
+df_with_sum.to_csv(source_folder/output_file)
+
+# print(column_sum)
+
+
+# how to sum that column and save csv
+# df.to_csv(source_folder/output_file)
