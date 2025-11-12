@@ -25,10 +25,13 @@ df.loc['Total']= df.sum()
 df.loc[df.index[-1], 'Type'] = ''
 # so defacto does not total the named column(s)
 
-"""Note that to do multiple columns, would need to start by defining a list of columns
-column_names = 
-then using that in the construction below:
+"""
+# Note that to do multiple columns, would need to start by defining a list of columns
+column_names = 'Type', 'Othercost'
+# then using that in the construction below:
 df.loc[df.index[-1], column_names] = ''
+or the really clumsy way is to just repeat that line with a different name each time
+but that is clumsy
 """
 
 # print(df)
