@@ -1,0 +1,40 @@
+# 12Nov2025, looking at adapting a csv into a dataframe
+
+
+import pandas as pd
+import os
+from pathlib import Path
+
+source_folder = Path('/filepath/Python/')
+source_file = "TestCSVOct2025.csv"
+output_file = "TestCSVOct2025Output.csv"
+
+df = pd.read_csv(source_folder/source_file, skiprows=2)
+# above skips a fixed number of rows, in this case 2 (counting zero as one)
+
+"""below drops the named column
+The axis=1 parameter specifies that the operation is on columns, 
+and inplace=True modifies the original DataFrame directly"""
+df.drop(["Date"], axis=1, inplace=True)
+
+# below totals every column in df
+# this means strings would be concatenated
+df.loc['Total']= df.sum()
+
+# below leaves last value (-1) in # named column blank
+df.loc[df.index[-1], 'Type'] = ''
+# so defacto does not total the named column(s)
+
+"""Note that to do multiple columns, would need to start by defining a list of columns
+column_names = 
+then using that in the construction below:
+df.loc[df.index[-1], column_names] = ''
+"""
+
+# print(df)
+
+""" below saves new df to output file, indexfalse avoids it 
+adding an index column into the csv, so if you want the row to
+have the label 'total' index should NOT be false"""
+# df.to_csv(source_folder/output_file, index=False)
+df.to_csv(source_folder/output_file)
