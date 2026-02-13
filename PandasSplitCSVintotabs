@@ -1,0 +1,23 @@
+# Feb 2026  Aim is to split a single csv into a xlsx with tabs for each day...
+
+
+import pandas as pd
+import xlsxwriter
+from pathlib import Path
+
+source_folder = Path('/spampath/here/')
+source_file = 'Feb2026daysplit.csv'
+output_file = 'zFeb2026daysplit.xlsx'
+
+df = pd.read_csv(source_folder / source_file)
+
+# below converts the date from regular object to datetime object
+df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
+
+# print(df['Received'].dtype) # Should output: datetime64[ns]
+# above can be used to check that it is a datetime object
+
+# below populates the output file with tabs with each day grouped together
+with pd.ExcelWriter(source_folder / output_file, engine='xlsxwriter') as writer:
+    for date, group in df.groupby(df['Received'].dt.date):
+        group.to_excel(writer, sheet_name=str(date), index=False)
