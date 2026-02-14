@@ -1,23 +1,35 @@
-# Feb 2026  Aim is to split a single csv into a xlsx with tabs for each day...
-
+# Feb 2026  Aim is to learn how to split a single csv into a xlsx with tabs for each day...
 
 import pandas as pd
 import xlsxwriter
+from datetime import date
 from pathlib import Path
 
 source_folder = Path('/spampath/here/')
 source_file = 'Feb2026daysplit.csv'
-output_file = 'zFeb2026daysplit.xlsx'
+#output_file = 'zFeb2026daysplit.xlsx'
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.xlsx"
+
 
 df = pd.read_csv(source_folder / source_file)
 
-# below converts the date from regular object to datetime object
+# below converts the date (in column called 'received'
+# from a regular object to a datetime object
 df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
 
 # print(df['Received'].dtype) # Should output: datetime64[ns]
 # above can be used to check that it is a datetime object
 
+
 # below populates the output file with tabs with each day grouped together
 with pd.ExcelWriter(source_folder / output_file, engine='xlsxwriter') as writer:
     for date, group in df.groupby(df['Received'].dt.date):
-        group.to_excel(writer, sheet_name=str(date), index=False)
+        #group.to_excel(writer, sheet_name=str(date), index=False) # this works but is date only
+        group.to_excel(writer, sheet_name=f"spam{date}", index=False)
+
+
+# todo. Ok, need to have tab add a letter.
+# need to create a list of files, have a for loop run for file in file
+# load df then split into tabs with name of file in tab name (along with date).
