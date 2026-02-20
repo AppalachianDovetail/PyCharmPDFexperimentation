@@ -1,0 +1,37 @@
+# Feb 2026 to practice renaming tabs after they've been created in an xlsx file
+
+import openpyxl
+from pathlib import Path
+import re
+
+source_folder = Path('/filepath here')
+source_file = '2026-02-14.xlsx'
+
+# Load the workbook
+workbook = openpyxl.load_workbook(source_folder / source_file)
+
+""" NOTE THIS SHOULD ALL BE DONE AFTER SORTING THE TABS INTO THEIR CORRECT DATE ORDER
+WHICH BY THE WAY IS GOING TO BE ITS OWN FUN LITTLE PROJECT"""
+
+"""
+# Rename each worksheet (example: prefix with "New_")
+for sheet in workbook.worksheets:
+    sheet.title = f"New_{sheet.title}"
+"""
+
+# Iterate through each sheet and modify the name
+for sheet in workbook.worksheets:
+    # Example: Remove all text in parentheses and spaces around
+    # new_name = re.sub(r'\s*\(.*?\)\s*', '', sheet.title)
+    # Below removes "csv" from each sheet name
+    # new_name = re.sub(r'(csv)', '', sheet.title)
+    # Below removes ".csv" from each sheet name
+    # new_name = re.sub(r'(\.csv)', '', sheet.title)
+    # Below removes ".csv and year and month"
+    new_name = re.sub(r'(\.csv\d\d\d\d-\d\d-)', '', sheet.title)
+    # Ensure the new name is valid and unique
+    sheet.title = new_name
+
+# Save the changes
+workbook.save(source_folder / source_file)
+
