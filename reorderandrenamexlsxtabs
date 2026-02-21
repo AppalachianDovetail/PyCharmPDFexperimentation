@@ -1,0 +1,49 @@
+# Feb 2026 to practice reordering tabs to something like
+# date order after they've been created in an xlsx file
+# and then renaming them
+
+"""
+OK I THINK THE KEY IS TO HAVE THE FILE GENERATE IN THE ORDER; "DATE-WEBSITE LETTER"
+NOT "WEBSITE LETTER-DATE" SO REORDERING IS EASILY DONE BY DATE AND
+ THEN SWAP THE NAME AROUND AFTERWARDS.
+This script assumes tab is created by Pandas with name format YYYY-MM-DDW.csv
+
+Actually if it's generating them that way... can Pandas order them before creating the xlsx?"""
+
+import openpyxl
+from pathlib import Path
+import re
+
+source_folder = Path('YOUR PATH HERE')
+source_file = '2026-02-20.xlsx'
+output_file = '2026-02-21a.xlsx'
+
+# Load the workbook
+workbook = openpyxl.load_workbook(source_folder / source_file)
+# Note that I'm using 'workbook' here, but this could be changed to wb.
+# Check which one is in use in the script I'm adding to.
+
+
+# Sort sheets alphabetically by name
+workbook._sheets.sort(key=lambda ws: ws.title)
+
+
+""" ok I want to break the name into four groups 1, 2, 3, 4 and then make the new name
+3,2, and lose groups 1 and 4
+NB Python actually counts five groups with 0 being the whole thing but we can ignore that here"""
+
+# Iterate through each sheet and modify the name
+for sheet in workbook.worksheets:
+    # Example: Remove all text in parentheses and spaces around
+    # new_name = re.sub(r'\s*\(.*?\)\s*', '', sheet.title)
+    # Below removes ".csv" from each sheet name
+    # new_name = re.sub(r'(\.csv)', '', sheet.title)
+    # Below turns date-website-csv into four groups, then makes new name groups 3 and 2
+    new_name = re.sub(r'(\d\d\d\d-\d\d-)(\d\d)(.+)(\.csv)', r'\g<3>\g<2>', sheet.title)
+    # ok the + in the above regex means the original csv name can be as many characters as you want
+    # this will just strip the .csv off the end and move the date. Name will be preserved
+    sheet.title = new_name
+
+
+# Save the changes
+workbook.save(source_folder / output_file)
