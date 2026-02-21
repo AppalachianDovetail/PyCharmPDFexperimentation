@@ -1,0 +1,30 @@
+# Feb 2026 to practice reordering tabs to something like
+# date order after they've been created in an xlsx file
+
+"""
+OK I THINK THE KEY IS TO HAVE THE FILE GENERATE IN THE ORDER; "DATE-WEBSITE LETTER"
+NOT "WEBSITE LETTER-DATE" THEN REORDER THEM THEN SWAP THE NAME AROUND AFTERWARDS.
+
+Actually if it's generating that way... can Pandas order them before creating the xlsx?
+
+"""
+
+import openpyxl
+from pathlib import Path
+
+source_folder = Path('/SPAM SPAM YOUR FILEPATH HERE SPAM SPAM')
+source_file = '2026-02-20.xlsx'
+output_file = '2026-02-21.xlsx'
+
+# Load the workbook
+workbook = openpyxl.load_workbook(source_folder / source_file)
+
+# Sort sheets alphabetically by name
+workbook._sheets.sort(key=lambda ws: ws.title)
+
+
+# Save the changes
+workbook.save(source_folder / output_file)
+
+# Note that I'm using 'workbook' here, but this could be changed to wb.
+# Check which one is in use in the script I'm adding to.
