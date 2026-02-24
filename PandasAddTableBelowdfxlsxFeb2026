@@ -1,0 +1,39 @@
+# Feb2026 Aim is to add a space then a row to the bottom of a df
+# this will require finding the bottom of the df and adding to it, regardless of
+# how many rows are already in the df.
+# I have been able to make this work on csv, but today at it failed on xlsx
+
+import pandas as pd
+from pathlib import Path
+
+source_folder = Path('YOur path here')
+source_file = 'Feb2026daysplit.csv'
+output_file = 'NowWithExtraLines.xlsx'
+
+df = pd.read_csv(source_folder / source_file)
+
+# Find len(gth) of df, and add a row full of NaN
+df.loc[len(df)] = pd.Series()
+
+# Define what the new row will be:
+totals_row = {'Vendor Tx Code': "spam", 'Refund': "eggs"}
+# Note that is done as a dictionary, with entries alternating between col name
+# and the thing to be inserted
+
+# Update df with new row of crucial information:
+df = pd.concat([df, pd.DataFrame([totals_row])], ignore_index=True)
+
+# Above adds one blank row and then one text row. To add a second all of it needs to be
+# repeated:
+
+# Find len(gth) of df, and add a row full of NaN
+df.loc[len(df)] = pd.Series()
+# Define what the next new row will be:
+happy_row = {'Vendor Tx Code': "happy spam", 'Refund': "happy eggs"}
+# Update df with new row of crucial information:
+df = pd.concat([df, pd.DataFrame([happy_row])], ignore_index=True)
+
+
+# print(df)
+df.to_excel(source_folder/output_file)
+
