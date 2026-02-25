@@ -1,0 +1,61 @@
+# Feb 2026  Aim is to learn how to split a single csv into a odf with tabs for each day, but
+# then to add a table a few lines below the df
+
+import pandas as pd
+from datetime import date
+from pathlib import Path
+
+source_folder = Path('YOURPATHHERE')
+source_file = 'Feb2026daysplit.csv'
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.xlsx"
+
+df = pd.read_csv(source_folder / source_file)
+
+# below converts the date (in column called 'received'
+# from a regular object to a datetime object
+df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
+
+# print(df['Received'].dtype) # Should output: datetime64[ns]
+# above can be used to check that it is a datetime object
+
+
+# Below populates the output file with tabs with each day grouped together
+with pd.ExcelWriter(source_folder / output_file, engine='xlsxwriter') as writer:
+    for date, group in df.groupby(df['Received'].dt.date):
+        #group.to_excel(writer, sheet_name=str(date), index=False) # this works but is date only
+        group.to_excel(writer, sheet_name=f"spam{date}", index=False)
+df.to_excel(writer)
+
+
+# Having created the sheet above, we now re-open it to modify each sheet
+
+with pd.ExcelWriter(source_folder/output_file, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
+    for sheet_name in pd.ExcelFile(source_folder/output_file).sheet_names:
+        df = pd.read_excel(source_folder/output_file, sheet_name=sheet_name)
+        # Perform modifications
+        # df['new_column'] = 'modified'
+        # Find len(gth) of df, and add a row full of NaN
+        df.loc[len(df)] = pd.Series()
+        # Define what the new row will be:
+        totals_row = {'Vendor Tx Code': "spam", 'Refund': "eggs"}
+        # Note that is done as a dictionary, with entries alternating between col name
+        # and the thing to be inserted
+        # Update df with new row of crucial information:
+        df = pd.concat([df, pd.DataFrame([totals_row])], ignore_index=True)
+        # Above adds one blank row and then one text row. To add a second all of it needs to be
+        # repeated:
+        # Find len(gth) of df, and add a row full of NaN
+        df.loc[len(df)] = pd.Series()
+        # Define what the next new row will be:
+        happy_row = {'Vendor Tx Code': "happy spam", 'Refund': "happy eggs"}
+        # Update df with new row of crucial information:
+        df = pd.concat([df, pd.DataFrame([happy_row])], ignore_index=True)
+
+        # Write back to the same sheet
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+# Ok, this does work.
+# Splits a csv into tabs by date, then adds lines as if required:
+# Does spit out a futurewarning. But it works.
