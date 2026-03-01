@@ -37,11 +37,11 @@ with pd.ExcelWriter(source_folder/output_file, mode='a', engine='openpyxl', if_s
         # Perform modifications
         # Find len(gth) of df, and add a row full of NaN
         #df.loc[len(df)] = pd.Series()
-        amex_total = df.loc[df['Payment Type'] == 'Amex', 'Amount (inc Surcharge)'].sum()
+        amtrac_total = df.loc[df['Payment Type'] == 'amtrac', 'Amount (inc Surcharge)'].sum()
         all_total = df['Amount (inc Surcharge)'].sum()
         new_rows = pd.DataFrame([
             {'Amount (inc Surcharge)': ''},
-            {'Amount (inc Surcharge)': amex_total, 'Type': "amex_total"},
+            {'Amount (inc Surcharge)': amtrac_total, 'Type': "amtrac_total"},
             {'Amount (inc Surcharge)': ''},
             {'Amount (inc Surcharge)': all_total, 'Type': "all_total"}
         ])
