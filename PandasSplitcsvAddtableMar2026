@@ -1,0 +1,55 @@
+# Mar2026  Aim is to  to split a single csv into a xlsx with tabs for each day, but
+# then to add a table a few lines below the df
+
+import pandas as pd
+from datetime import date
+from pathlib import Path
+
+source_folder = Path('spam path here')
+source_file = 'Feb2026daysplit.csv'
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.xlsx"
+
+df = pd.read_csv(source_folder / source_file)
+
+# below converts the date (in column called 'received')
+# from a regular object to a datetime object
+df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
+
+# print(df['Received'].dtype) # Should output: datetime64[ns]
+# above can be used to check that it is a datetime object
+
+
+# Below populates the output file with tabs with each day grouped together
+with pd.ExcelWriter(source_folder / output_file, engine='xlsxwriter') as writer:
+    for date, group in df.sort_values(['Amount (inc Surcharge)']).groupby(df['Received'].dt.date):
+        # note how above sorts before the grouping, but the sort order is preserved within the groups
+        # after grouping.
+        group.to_excel(writer, sheet_name=f"spam{date}", index=False)
+df.to_excel(writer)
+
+# Having created the whole thing above, we now re-open it to modify each sheet
+
+with pd.ExcelWriter(source_folder/output_file, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
+    for sheet_name in pd.ExcelFile(source_folder/output_file).sheet_names:
+        df = pd.read_excel(source_folder/output_file, sheet_name=sheet_name)
+        # Perform modifications
+        # Find len(gth) of df, and add a row full of NaN
+        #df.loc[len(df)] = pd.Series()
+        amex_total = df.loc[df['Payment Type'] == 'Amex', 'Amount (inc Surcharge)'].sum()
+        all_total = df['Amount (inc Surcharge)'].sum()
+        new_rows = pd.DataFrame([
+            {'Amount (inc Surcharge)': ''},
+            {'Amount (inc Surcharge)': amex_total, 'Type': "amex_total"},
+            {'Amount (inc Surcharge)': ''},
+            {'Amount (inc Surcharge)': all_total, 'Type': "all_total"}
+        ])
+        df = pd.concat([df, new_rows], ignore_index=True)
+        # above four lines added as dict rather than concatenated individually as
+        # this avoids the future warning from adding blank rows one at a time
+        # Write back to the same sheet
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+# hmm is it ok to end the script hanging indented out like that or should there be something
+# to close it off?
+
