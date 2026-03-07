@@ -1,0 +1,52 @@
+# Mar2026  Aim here is to show how to write a pandas df to a
+# xlsx template file so the formatting in the template file
+# is present in the end product (output_file)
+
+import pandas as pd
+from datetime import date
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+from pathlib import Path
+
+source_folder = Path('your path here spam spam')
+source_file = 'Feb2026daysplit.csv'
+# template_file = "ODSMarchTemplate.ots" # this fails as module can't handle ots format
+template_file = "March2026.xlsx" # this is blank but has 12pt font saved...
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.xlsx"
+
+df = pd.read_csv(source_folder / source_file)
+
+# below converts the date (in column called 'received')
+# from a regular object to a datetime object
+df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
+
+# print(df['Received'].dtype) # Should output: datetime64[ns]
+# above can be used to check that it is a datetime object
+
+wb = load_workbook(source_folder/template_file)
+
+# Select the sheet (e.g., 'Sheet1')
+ws = wb['Sheet1']
+
+# Insert DataFrame starting at cell A1 (or any specific cell)
+for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), 1):
+    for c_idx, value in enumerate(row, 1):
+        ws.cell(row=r_idx, column=c_idx, value=value)
+
+# Save as a new file
+wb.save(source_folder/output_file)
+
+"""Ok, as a proof of concept this works; the font is set in the template file
+the df read from the source file. And when the df is written to the output file it
+keeps the font size from the template file..."""
+
+"""Now, this is with the template as an xlsx file. Does it need to be in another format?
+Regarding headers and footers.
+It may be possible to create ods (which gets tab name as header)
+Then save as xlsx (which keeps tab name as header)
+and use that as template file so that when df is written to it 
+header stays in output file.
+Maybe.
+"""
