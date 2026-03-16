@@ -16,6 +16,24 @@ wb = load_workbook(source_folder/source_file)
 for sheet_name in wb.sheetnames:
     ws = wb[sheet_name]
 
+    # Below insert added 16Mar2026 to add Header/Footer functionality
+    # Below adds the sheet name to the header of the sheet so it will print as a title.
+    ws.oddHeader.center.text = sheet_name
+    ws.oddHeader.center.size = 9
+    ws.oddHeader.center.font = "Arial"
+    # It is duplicated odd and even because if this prints across multiple pages it will alternate the text
+    ws.evenHeader.center.text = sheet_name
+    ws.evenHeader.center.size = 9
+    ws.evenHeader.center.font = "Arial"
+    # Below adds page no to footer
+    ws.oddFooter.center.text = "Page &[Page]"
+    ws.oddFooter.center.size = 9
+    ws.oddFooter.center.font = "Arial"
+    # It is duplicated odd and even because if this prints across multiple pages it will alternate the text
+    ws.evenFooter.center.text = "Page &[Page]"
+    ws.evenFooter.center.size = 9
+    ws.evenFooter.center.font = "Arial"
+    # Above is insert 16Mar2026 to add header/footer functionality
     # Example: Format header row (e.g., row 1)
     for cell in ws[1]:  # First row
         # cell.font = Font(bold=True, color="FFFFFF")
