@@ -1,0 +1,44 @@
+# Mar2026  Aim is to split a single csv into a .ods with tabs for each day, but
+# then to add a table a few lines below the df
+# Below is copied from GitHub's copilot after it adjusted a file already on there from xlsx output to ods output.
+# first attempt gave value error because of append mode. So instead trying this:
+# It works because (unlike previous efforts) it creates a dictionary where each sheet is an entry in the dictionary
+# then modifies each sheet within the dictionary. So to speak.
+
+import pandas as pd
+from datetime import date
+from pathlib import Path
+
+source_folder = Path('spam path here')
+source_file = 'Feb2026daysplit.csv'
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.ods"
+
+df = pd.read_csv(source_folder / source_file)
+
+# below converts the date (in column called 'received')
+# from a regular object to a datetime object
+df['Received'] = pd.to_datetime(df['Received'], format = '%d/%m/%y %H:%M:%S')
+
+# Create a dictionary to store modified dataframes for each sheet
+sheets_to_write = {}
+
+# Process each day's data
+for date, group in df.sort_values(['ticket']).groupby(df['Received'].dt.date):
+    # Perform modifications on each group
+    amtrac_total = group.loc[group['Payment Type'] == 'amtrac', 'ticket'].sum()
+    all_total = group['ticket'].sum()
+    new_rows = pd.DataFrame([
+        {'ticket': ''},
+        {'ticket': amtrac_total, 'Type': "amtrac_total"},
+        {'ticket': ''},
+        {'ticket': all_total, 'Type': "all_total"}
+    ])
+    modified_group = pd.concat([group, new_rows], ignore_index=True)
+    sheets_to_write[f"spam{date}"] = modified_group
+
+# Write all sheets in one operation
+with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
+    for sheet_name, sheet_df in sheets_to_write.items():
+        sheet_df.to_excel(writer, sheet_name=sheet_name, index=False)
