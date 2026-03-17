@@ -5,6 +5,7 @@
 import pandas as pd
 from datetime import date
 from pathlib import Path
+import shutil
 
 source_folder = Path('spam path here')
 source_files = ['X.csv', 'Y.csv', 'Z.csv']  # List of source CSV files
@@ -14,7 +15,7 @@ output_file = f"{today}.ods"
 archive_folder = Path('path to spam archive folder')
 
 # Create a dictionary to store modified dataframes for each sheet
-sheets_to_write = {}
+sheets_to_write = {} 
 
 # Process each source file
 for source_file in source_files:
@@ -48,3 +49,17 @@ for source_file in source_files:
 with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
     for sheet_name, sheet_df in sheets_to_write.items():
         sheet_df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+# Archive the source CSV files with today's date in the filename
+for source_file in source_files:
+    source_path = source_folder / source_file
+    # Create new filename with today's date: "filename_2026-03-17.csv"
+    file_stem = Path(source_file).stem
+    file_extension = Path(source_file).suffix
+    archived_filename = f"{file_stem}_{today}{file_extension}"
+    archived_path = archive_folder / archived_filename
+    
+    # Move the file to archive folder
+    if source_path.exists():
+        shutil.move(str(source_path), str(archived_path))
+        print(f"Archived: {source_file} → {archived_filename}")
