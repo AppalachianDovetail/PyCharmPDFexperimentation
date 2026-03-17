@@ -11,6 +11,7 @@ source_files = ['X.csv', 'Y.csv', 'Z.csv']  # List of source CSV files
 # below is so our output file is named with today's date
 today = date.today()
 output_file = f"{today}.ods"
+archive_folder = Path('path to spam archive folder')
 
 # Create a dictionary to store modified dataframes for each sheet
 sheets_to_write = {}
