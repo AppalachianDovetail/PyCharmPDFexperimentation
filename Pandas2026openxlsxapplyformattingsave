@@ -15,7 +15,9 @@ wb = load_workbook(source_folder/source_file)
 # Apply formatting to all sheets
 for sheet_name in wb.sheetnames:
     ws = wb[sheet_name]
-
+    # Set row height for all rows
+    for row in ws.iter_rows():
+        ws.row_dimensions[row[0].row].height = 13 # Gives .45cm row height
     # Below insert added 16Mar2026 to add Header/Footer functionality
     # Below adds the sheet name to the header of the sheet so it will print as a title.
     ws.oddHeader.center.text = sheet_name
