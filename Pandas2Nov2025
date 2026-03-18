@@ -9,8 +9,8 @@ source_folder = Path('/filepath/Python/')
 source_file = "TestCSVOct2025.csv"
 output_file = "TestCSVOct2025Output.csv"
 
-df = pd.read_csv(source_folder/source_file, skiprows=2)
-# above skips a fixed number of rows, in this case 2 (counting zero as one)
+df = pd.read_csv(source_folder/source_file, skiprows=8)
+# above skips a fixed number of rows, in this case 8 (counting zero as one)
 
 """below drops the named column
 The axis=1 parameter specifies that the operation is on columns, 
