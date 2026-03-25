@@ -52,6 +52,22 @@ with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
     for sheet_name, sheet_df in sheets_to_write.items():
         sheet_df.to_excel(writer, sheet_name=sheet_name, index=False)
 
+        # Below added 25Mar2026 to auto-adjust columns
+        # Auto-size columns for this sheet
+        worksheet = writer.sheets[sheet_name]
+        for column in worksheet.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)  # Add 2 for padding, cap at 50
+            worksheet.column_dimensions[column_letter].width = adjusted_width
+         # Above added 25Mar2026 to auto-adjust columns
+
 # Archive the source CSV files with today's date in the filename
 for source_file in source_files:
     # Create new filename with today's date: "filename_2026-03-17.csv"
