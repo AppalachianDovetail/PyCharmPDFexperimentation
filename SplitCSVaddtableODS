@@ -52,6 +52,7 @@ with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
     for sheet_name, sheet_df in sheets_to_write.items():
         sheet_df.to_excel(writer, sheet_name=sheet_name, index=False)
 
+"""
         # Below added 25Mar2026 to auto-adjust columns
         # Auto-size columns for this sheet
         worksheet = writer.sheets[sheet_name]
@@ -67,6 +68,31 @@ with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
             adjusted_width = min(max_length + 2, 50)  # Add 2 for padding, cap at 50
             worksheet.column_dimensions[column_letter].width = adjusted_width
          # Above added 25Mar2026 to auto-adjust columns
+"""
+# Above did not work. It wants to work with openpyxl .xlsx file, but odf engine means ods files. 
+# So instead copilot suggests this:
+
+# Below added 25Mar2026 to auto-adjust columns
+# Auto-size columns for this sheet
+worksheet = writer.sheets[sheet_name]
+
+ # Below added 26Mar2026 to auto-adjust columns
+# For ODF engine, adjust column widths differently
+for idx, col in enumerate(sheet_df.columns, start=1):
+    max_length = len(str(col))  # Start with header length
+    for cell_value in sheet_df[col]:
+        try:
+            if len(str(cell_value)) > max_length:
+                max_length = len(str(cell_value))
+        except:
+            pass
+    adjusted_width = min(max_length + 2, 50)  # Add 2 for padding, cap at 50
+    # Set column width using column index (1-based)
+    worksheet.set_column_width(idx, adjusted_width / 7)  # ODF uses different width units
+
+ # Above added 26Mar2026 to auto-adjust columns
+
+
 
 # Archive the source CSV files with today's date in the filename
 for source_file in source_files:
