@@ -1,0 +1,35 @@
+# 30Mar2026 Aim here is to open csv, read into pandas, then export to ods
+# But ODS to have appropriate column width
+
+
+import pandas as pd
+import os
+from pathlib import Path
+
+source_folder = Path('/Spam File Path')
+source_file = "CSVwithbadcols2026.csv"
+output_file = "CSVwithgoodcols2026.ods"
+
+df = pd.read_csv(source_folder/source_file)
+# above creates df from the csv
+
+
+print(df)
+
+# Adjust column widths differently
+for idx, col in enumerate(df.columns, start=1):
+    max_length = len(str(col))  # Start with header length
+    for cell_value in df[col]:
+        try:
+            if len(str(cell_value)) > max_length:
+                max_length = len(str(cell_value))
+        except:
+            pass
+    adjusted_width = min(max_length + 2, 50)  # Add 2 for padding, cap at 50
+    # Set column width using column index (1-based)
+    worksheet.set_column_width(idx, adjusted_width / 7)  # ODF uses different width units
+# Above is for column widths
+
+# Write df to ods file:
+with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
+    df.to_excel(writer, index=False)
