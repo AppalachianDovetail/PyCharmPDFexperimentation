@@ -1,0 +1,15 @@
+# Apr2026 this is just a simple script to read a csv into a pandas df and print the output
+# this then allows a human to see what pandas sees, so that relevant text can be parsed.
+
+# importing required stuff
+
+import pandas as pd
+from pathlib import Path
+# note that above \ had to change to / in order to work
+source_folder = Path('spam path here')
+source_file = "eggs.csv"
+
+
+df = pd.read_csv(source_folder / source_file)
+
+print(df)
