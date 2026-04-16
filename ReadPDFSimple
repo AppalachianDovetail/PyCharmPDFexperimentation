@@ -1,0 +1,22 @@
+# Mar2026 this is just a simple script to read a pdf and print the output
+# this then allows a human to see what PyPDF reader sees, so that relevant text can be identified for regex matching
+
+# importing required stuff
+
+from pypdf import PdfReader
+from pathlib import Path
+
+source_folder = Path('spam path here')
+# note that above \ had to change to / in order to work
+source_file = 'eggs.pdf'
+
+reader = PdfReader(source_folder / source_file)
+
+# printing number of pages in pdf file
+# print(len(reader.pages))
+
+# creating a page object
+page = reader.pages[0]
+
+# extracting text from page
+print(page.extract_text())
