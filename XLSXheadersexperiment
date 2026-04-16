@@ -1,0 +1,54 @@
+# Apr2026 this is just a simple script to try adding headers and footers
+# to an xlsx file. From https://xlsxwriter.readthedocs.io/example_headers_footers.html
+
+# importing required stuff
+
+import pandas as pd
+from pathlib import Path
+import xlsxwriter
+# note that above \ had to change to / in order to work
+source_folder = Path('spam path here')
+thefile = "Sales.xlsx"
+
+
+workbook = xlsxwriter.Workbook(source_folder / thefile)
+preview = "Select Print Preview to see the header and fouter" # a string to use later
+
+
+# A simple example to start
+
+worksheet1 = workbook.add_worksheet("Simple")
+header1 = "&CHere is some centered text."
+footer1 = "&LHere is some left aligned text."
+
+worksheet1.set_header(header1)
+worksheet1.set_footer(footer1)
+
+worksheet1.set_column("A:A", 50)
+worksheet1.write("A1", preview) # This line adds text to the body of the sheet but in doing so overwrites a bunch
+# of stuff so I have commented it out for now.
+
+# This is an example of some of the header/footer variables.
+#
+worksheet3 = workbook.add_worksheet("Variables")
+header3 = "&LPage &P of &N" + "&CFilename: &F" + "&RSheetname: &A"
+footer3 = "&LCurrent date: &D" + "&RCurrent time: &T"
+
+worksheet3.set_header(header3)
+worksheet3.set_footer(footer3)
+
+worksheet3.set_column("A:A", 50)
+worksheet3.write("A1", preview)
+worksheet3.write("A21", "Next sheet")
+worksheet3.set_h_pagebreaks([20]) # sets horizontal pagebreaks (rows)
+worksheet3.set_v_pagebreaks([7])  # sets vertical pagebreaks (cols)
+
+# Set row height
+# worksheet3.set_row(3, 50) #Ok, that sets the height of row 3, how do I set all rows!??
+# worksheet3.set_default_row(50) #Ok, this changes height of ALL ROWS on this sheet. Yay! 50=1.75cm...
+# worksheet3.set_default_row(25) #Ok, this changes height of ALL ROWS on this sheet. Yay! 25=0.87cm...
+# so a value of 1 = 0.035 cm. I want 0.45cm...
+worksheet3.set_default_row(13) # gives row height of 0.45cm on this worksheet.
+
+
+workbook.close()
