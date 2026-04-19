@@ -1,18 +1,37 @@
 # 18Apr2026 Aim here is to show how to open xlsx file and save as ods,
 
-import aspose.cells
-from aspose.cells import Workbook
-# from openpyxl import load_workbook
+import subprocess
 from pathlib import Path
-from pathlib import PosixPath
 
 source_folder = Path('/Spampath')
 source_file = '2026-04-19.xlsx'
 output_file = "2026-04-19.ods"
 
-# Load the XLSX file
-workbook = Workbook(str(PosixPath(source_folder/ source_file)))
+input_path = source_folder / source_file
+output_path = source_folder / output_file
 
-# Save as ODS
-workbook.save(str(PosixPath(source_folder/ output_file)))
+# Below is for error-handling. If it can't find the source file it will say so.
+try:
+    if not input_path.exists():
+        raise FileNotFoundError(f"Source file not found: {input_path}")
 
+    # Use LibreOffice to convert
+    subprocess.run([
+        'libreoffice', '--headless', '--convert-to', 'ods',
+        '--outdir', str(source_folder),
+        str(input_path)
+    ], check=True)
+
+    print(f"✓ Successfully converted {source_file} to ODS")
+
+except FileNotFoundError as e:
+    print(f"✗ Error: {e}")
+except subprocess.CalledProcessError as e:
+    print(f"✗ LibreOffice conversion failed: {e}")
+
+
+# Note this may give warning:
+# Warning: failed to launch javaldx - java may not function correctly
+# That is beacuse Libre checks for certain Java functions, and if Java isn't installed, won't find them.
+# But they aren't needed for the conversion. So this can be ignored. Or, install Java. We don't need it, but it may
+# get rid of that error message...
