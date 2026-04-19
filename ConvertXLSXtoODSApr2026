@@ -1,0 +1,18 @@
+# 18Apr2026 Aim here is to show how to open xlsx file and save as ods,
+
+import aspose.cells
+from aspose.cells import Workbook
+# from openpyxl import load_workbook
+from pathlib import Path
+from pathlib import PosixPath
+
+source_folder = Path('/Spampath')
+source_file = '2026-04-19.xlsx'
+output_file = "2026-04-19.ods"
+
+# Load the XLSX file
+workbook = Workbook(str(PosixPath(source_folder/ source_file)))
+
+# Save as ODS
+workbook.save(str(PosixPath(source_folder/ output_file)))
+
