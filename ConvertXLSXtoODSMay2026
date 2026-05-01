@@ -1,0 +1,17 @@
+# May2026 inspired by a comment on
+# https://stackoverflow.com/questions/15257032/python-convert-excel-file-xls-or-xlsx-to-from-ods
+
+
+from pyexcel_ods3 import save_data
+from pyexcel_xlsx import get_data
+from pathlib import Path
+
+source_folder = Path('/Spam File Path')
+source_file = "today.xlsx"
+output_file = "today.ods"
+
+
+dataXlsx = get_data(source_folder / source_file)
+save_data(source_folder / output_file, dataXlsx)
+
+
