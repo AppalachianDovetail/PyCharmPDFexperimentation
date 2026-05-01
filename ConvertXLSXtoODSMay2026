@@ -13,5 +13,8 @@ output_file = "today.ods"
 
 dataXlsx = get_data(source_folder / source_file)
 save_data(source_folder / output_file, dataXlsx)
+# Above gives error "Exception: file_name should be a string"
 
-
+# Has to be written out longhand as below:
+dataXlsx = get_data('/Spam File Path/today.xlsx' source_file)
+save_data('/Spam File Path/today.ods', dataXlsx)
