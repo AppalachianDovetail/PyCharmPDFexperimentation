@@ -1,0 +1,21 @@
+# May 2026  Aim is to read csv into pandas then output as ods to see if column width can be preserved.
+# of course some other stuff may be desirable in the middle, but cols width is a prime consideration here.
+
+
+import pandas as pd
+from datetime import date
+from pathlib import Path
+from pyexcel_ods3 import save_data
+
+source_folder = Path('Spam/Path/Here')
+source_file = 'CSV2026.csv'
+# below is so our output file is named with today's date
+today = date.today()
+output_file = f"{today}.ods"
+
+# Read the csv into Pandas and create dataframe
+df = pd.read_csv(source_folder / source_file)
+
+# Write the df from the csv to the .ods file
+with pd.ExcelWriter(source_folder / output_file, engine='odf') as writer:
+    df.to_excel(writer, sheet_name=f"spam{date}", index=False)
