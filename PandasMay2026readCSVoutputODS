@@ -1,5 +1,7 @@
 # May 2026  Aim is to read csv into pandas then output as ods to see if column width can be preserved.
 # of course some other stuff may be desirable in the middle, but cols width is a prime consideration here.
+# OK, after trying various solutions offered by copilot, this seems to be a non-runner.
+# Can a macro do this? A macro which is triggered by Python?
 
 
 import pandas as pd
