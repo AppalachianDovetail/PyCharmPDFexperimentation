@@ -1,0 +1,55 @@
+# May2026 to create a file as an error warning
+# This version should log the actual error.
+
+import logging
+import os
+import traceback
+from pathlib import Path
+
+error_text_file = 'failure.txt'
+nonexistent_file = 'nonexistent.xlsx'
+source_folder = Path('spam/eggs/parrot')
+
+def create_warning_file(error_message, filename="warning.log"):
+    #Creates a warning file with the error details.
+    with open(filename, 'a') as f:
+        f.write(f"Warning encountered: {error_message}\n")
+        f.write(traceback.format_exc() + "\n\n")
+
+# Try Block: Executes sequentially; if an exception occurs, the rest of the try block is skipped.
+
+# Except Block: If an exception matches the specified type, this block runs.
+# Multiple except blocks can handle different errors.
+
+# Else Block (Optional): Executes only if the try block completes without raising an exception.
+
+# Finally Block (Optional): Executes unconditionally after the try and except blocks,
+# ensuring cleanup tasks are never skipped.
+
+# Best Practices
+# Specific Exception Handling: Catch specific exceptions (e.g., ValueError, FileNotFoundError)
+# rather than using bare except: clauses to avoid masking unexpected bugs.
+
+
+try:
+    # Code that might raise an exception
+    with open(source_folder / nonexistent_file) as f:
+        print(f.read())
+except FileNotFoundError as e:
+    # Code to handle the specific exception
+    # Handle specific error
+    create_warning_file(f"File not found: {e}")
+    print("Warning file created. Check warning.log")
+    # os.startfile(warning.log)
+    # Above is WINDOWS-only to open the file in a window for the user to see. Not for *Nix or Mac
+except Exception as e:
+    # Fallback for unexpected errors
+    create_warning_file(f"Unexpected error: {e}")
+    # os.startfile(warning.log)
+    # Above is WINDOWS-only to open the file in a window for the user to see. Not for *Nix or Mac
+else:
+    # Optional: Runs only if no exception occurred
+    print("Operation successful")
+finally:
+    # Always runs, whether an exception occurred or not
+    print("Cleanup complete")
