@@ -1,0 +1,48 @@
+# May2026 to create a file as an error warning
+
+
+import os
+from pathlib import Path
+
+error_warning_file = 'danger.xlsx'
+error_text_file = 'failure.txt'
+nonexistent_file = 'nonexistent.xlsx'
+source_folder = Path('SPAM PATH HERE')
+
+
+# Try Block: Executes sequentially; if an exception occurs, the rest of the try block is skipped.
+
+# Except Block: If an exception matches the specified type, this block runs.
+# Multiple except blocks can handle different errors.
+
+# Else Block (Optional): Executes only if the try block completes without raising an exception.
+
+# Finally Block (Optional): Executes unconditionally after the try and except blocks,
+# ensuring cleanup tasks are never skipped.
+
+# Best Practices
+# Specific Exception Handling: Catch specific exceptions (e.g., ValueError, FileNotFoundError)
+# rather than using bare except: clauses to avoid masking unexpected bugs.
+
+
+try:
+    # Code that might raise an exception
+    with open(source_folder / nonexistent_file) as f:
+        print(f.read())
+except FileNotFoundError as e:
+    # Code to handle the specific exception
+    print(f"Error caught: {e}")
+    with open(error_text_file, 'w') as file:
+        file.write('This file has been created because an error occurred while executing '
+                   'try_error_output_and_open_file_May_2026.py \n'
+                   'The error was of type FileNotFoundError. '
+                   )
+        # os.startfile(error_text_file)
+        # Above is WINDOWS-only to open the file in a window for the user to see. Not for *Nix or Mac
+else:
+    # Optional: Runs only if no exception occurred
+    print("Operation successful")
+finally:
+    # Always runs, whether an exception occurred or not
+    print("Cleanup complete")
+
